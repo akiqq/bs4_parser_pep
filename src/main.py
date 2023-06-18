@@ -14,14 +14,13 @@ from constants import (
     PEP_URL,
     EXPECTED_STATUS)
 from configs import configure_argument_parser, configure_logging
+from exceptions import FileWriteError, MakingDirError
 from utils import find_sibling
 from utils import get_response, find_tag
 
 
 def pep(session):
     response = get_response(session, PEP_URL)
-    if response is None:
-        return None
     soup = BeautifulSoup(response.text, features='lxml')
     pep_list = find_tag(soup, 'section', attrs={'id': 'numerical-index'})
     tbody_tag = find_tag(pep_list, 'tbody')
@@ -128,18 +127,25 @@ def download(session):
     archive_url = urljoin(downloads_url, pdf_a4_link)
     filename = archive_url.split('/')[-1]
     downloads_dir = BASE_DIR / 'downloads'
-    downloads_dir.mkdir(exist_ok=True)
+    try:
+        downloads_dir.mkdir(exist_ok=True)
+    except:
+        raise MakingDirError('Ошибка при попытке создания директории!')
     archive_path = downloads_dir / filename
     response = session.get(archive_url)
-    with open(archive_path, 'wb') as file:
-        file.write(response.content)
-    logging.info(f'Архив был загружен и сохранён: {archive_path}')
+    try:
+        with open(archive_path, 'wb') as file:
+            file.write(response.content)
+        logging.info(f'Архив был загружен и сохранён: {archive_path}')
+    except:
+        raise FileWriteError('Ошибка при загруке архива!')
 
 
 MODE_TO_FUNCTION = {
     'whats-new': whats_new,
     'latest-versions': latest_versions,
     'download': download,
+    'pep': pep,
 }
 
 

@@ -4,6 +4,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 from constants import DT_FORMAT, LOG_FORMAT
+from exceptions import MakingDirError
 
 
 def configure_argument_parser(available_modes):
@@ -30,7 +31,10 @@ def configure_argument_parser(available_modes):
 
 def configure_logging():
     log_dir = BASE_DIR / 'logs'
-    log_dir.mkdir(exist_ok=True)
+    try:
+        log_dir.mkdir(exist_ok=True)
+    except:
+        raise MakingDirError('Ошибка при попытке создании директории')
     log_file = log_dir / 'parser.log'
     rotating_handler = RotatingFileHandler(
         log_file, maxBytes=10 ** 6, backupCount=5
