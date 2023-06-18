@@ -34,8 +34,8 @@ def file_output(results, cli_args):
     results_dir = BASE_DIR / 'results'
     try:
         results_dir.mkdir(exist_ok=True)
-    except:
-        raise MakingDirError('Ошибка при попытке создании директории')
+    except MakingDirError:
+        print('Ошибка при попытке создании директории')
     parser_mode = cli_args.mode
     now = dt.datetime.now()
     now_formatted = now.strftime(DATETIME_FORMAT)
@@ -46,5 +46,5 @@ def file_output(results, cli_args):
             writer = csv.writer(f, dialect='unix')
             writer.writerows(results)
         logging.info(f'Файл с результатами был сохранён: {file_path}')
-    except:
-        raise FileSaveError('Ошибка при сохранении файла!')
+    except FileSaveError:
+        print('Ошибка при сохранении файла!')

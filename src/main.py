@@ -129,16 +129,16 @@ def download(session):
     downloads_dir = BASE_DIR / 'downloads'
     try:
         downloads_dir.mkdir(exist_ok=True)
-    except:
-        raise MakingDirError('Ошибка при попытке создания директории!')
+    except MakingDirError:
+        print('Ошибка при попытке создания директории!')
     archive_path = downloads_dir / filename
     response = session.get(archive_url)
     try:
         with open(archive_path, 'wb') as file:
             file.write(response.content)
         logging.info(f'Архив был загружен и сохранён: {archive_path}')
-    except:
-        raise FileWriteError('Ошибка при загруке архива!')
+    except FileWriteError:
+        print('Ошибка при загруке архива!')
 
 
 MODE_TO_FUNCTION = {

@@ -33,8 +33,8 @@ def configure_logging():
     log_dir = BASE_DIR / 'logs'
     try:
         log_dir.mkdir(exist_ok=True)
-    except:
-        raise MakingDirError('Ошибка при попытке создании директории')
+    except MakingDirError:
+        print('Ошибка при попытке создании директории')
     log_file = log_dir / 'parser.log'
     rotating_handler = RotatingFileHandler(
         log_file, maxBytes=10 ** 6, backupCount=5
